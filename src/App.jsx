@@ -1,42 +1,52 @@
-import React, { useState } from 'react';
-import { 
-  Sparkles, Calendar, User, Download, CheckCircle2, Zap, 
-  RefreshCw, FileText, ArrowLeft, Feather
-} from 'lucide-react';
-
+import React, { useState } from "react";
+import {
+  Sparkles,
+  Calendar,
+  User,
+  Download,
+  CheckCircle2,
+  Zap,
+  RefreshCw,
+  FileText,
+  ArrowLeft,
+  Feather,
+} from "lucide-react";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://quantum-backend-y48d.onrender.com";
 export default function App() {
-  const [name, setName] = useState('Vikas Vitekari');
-  const [dob, setDob] = useState('2001-07-25');
+  const [name, setName] = useState("Vikas Vitekari");
+  const [dob, setDob] = useState("2001-07-25");
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     if (!dob) {
-      setError('Please select your Date of Birth.');
+      setError("Please select your Date of Birth.");
       return;
     }
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
-      const response = await fetch('/api/calculate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dob, name })
+      const response = await fetch(`${API_BASE_URL}/api/calculate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dob, name }),
       });
 
       const res = await response.json();
       if (!response.ok) {
-        throw new Error(res.error || 'Failed to process DOB');
+        throw new Error(res.error || "Failed to process DOB");
       }
 
       setIsSubmitted(true);
     } catch (err) {
       console.error(err);
-      setError(err.message || 'An error occurred during submission.');
+      setError(err.message || "An error occurred during submission.");
     } finally {
       setLoading(false);
     }
@@ -47,28 +57,28 @@ export default function App() {
     setDownloading(true);
 
     try {
-      const response = await fetch('/api/generate-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dob, name })
+      const response = await fetch(`${API_BASE_URL}/api/generate-pdf`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dob, name }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate PDF report');
+        throw new Error("Failed to generate PDF report");
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `Quantum_Sure_Success_Report_${(name || 'Client').replace(/\s+/g, '_')}.pdf`;
+      link.download = `Quantum_Sure_Success_Report_${(name || "Client").replace(/\s+/g, "_")}.pdf`;
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error(err);
-      alert('Failed to download PDF: ' + err.message);
+      alert("Failed to download PDF: " + err.message);
     } finally {
       setDownloading(false);
     }
@@ -76,7 +86,7 @@ export default function App() {
 
   const handleReset = () => {
     setIsSubmitted(false);
-    setError('');
+    setError("");
   };
 
   return (
@@ -87,11 +97,11 @@ export default function App() {
 
       {/* Main Container */}
       <div className="w-full max-w-lg mx-auto space-y-8 my-auto">
-        
         {/* Header Branding */}
         <div className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0a252c] border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-widest shadow-xl">
-            <Sparkles className="w-3.5 h-3.5" /> Quantum & Vedic Frequency Science
+            <Sparkles className="w-3.5 h-3.5" /> Quantum & Vedic Frequency
+            Science
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-cinzel text-gold-gradient tracking-wider drop-shadow-md">
             QUANTUM SURE SUCCESS
@@ -109,8 +119,12 @@ export default function App() {
                 <Feather className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-lg font-bold font-cinzel text-amber-300">Generate Report</h2>
-                <p className="text-slate-400 text-xs">Enter Date of Birth to calculate frequencies</p>
+                <h2 className="text-lg font-bold font-cinzel text-amber-300">
+                  Generate Report
+                </h2>
+                <p className="text-slate-400 text-xs">
+                  Enter Date of Birth to calculate frequencies
+                </p>
               </div>
             </div>
 
@@ -160,7 +174,8 @@ export default function App() {
               >
                 {loading ? (
                   <>
-                    <RefreshCw className="w-5 h-5 animate-spin" /> Processing Factors...
+                    <RefreshCw className="w-5 h-5 animate-spin" /> Processing
+                    Factors...
                   </>
                 ) : (
                   <>
@@ -182,7 +197,10 @@ export default function App() {
                 Your Report is Ready!
               </h2>
               <p className="text-slate-300 text-sm font-light">
-                Scan factors computed for <strong className="text-white font-semibold">{name || 'Client'}</strong>
+                Scan factors computed for{" "}
+                <strong className="text-white font-semibold">
+                  {name || "Client"}
+                </strong>
               </p>
               <div className="inline-block px-3 py-1 bg-[#031418] border border-amber-500/30 rounded-full text-xs text-amber-400 font-mono mt-1">
                 DOB: {dob}
@@ -198,11 +216,13 @@ export default function App() {
               >
                 {downloading ? (
                   <>
-                    <RefreshCw className="w-6 h-6 animate-spin" /> Generating PDF Report...
+                    <RefreshCw className="w-6 h-6 animate-spin" /> Generating
+                    PDF Report...
                   </>
                 ) : (
                   <>
-                    <Download className="w-6 h-6" /> Download PDF Report (61 Pages)
+                    <Download className="w-6 h-6" /> Download PDF Report (61
+                    Pages)
                   </>
                 )}
               </button>
@@ -214,12 +234,12 @@ export default function App() {
                 onClick={handleReset}
                 className="inline-flex items-center gap-2 text-xs text-slate-400 hover:text-amber-300 transition cursor-pointer"
               >
-                <ArrowLeft className="w-3.5 h-3.5" /> Change Date of Birth / Process Another Report
+                <ArrowLeft className="w-3.5 h-3.5" /> Change Date of Birth /
+                Process Another Report
               </button>
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
